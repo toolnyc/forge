@@ -1,0 +1,25 @@
+name: Deploy Builder to Hetzner
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "infra/builder/**"
+      - ".github/workflows/deploy-builder.yml"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.HETZNER_HOST }}
+          username: ${{ secrets.HETZNER_USER }}
+          key: ${{ secrets.HETZNER_SSH_KEY }}
+          script: |
+            cd /opt/forge
+            git pull origin main
+            sudo systemctl restart forge-builder
+            sleep 2
+            systemctl is-active forge-builder
