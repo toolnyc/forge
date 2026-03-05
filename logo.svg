@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <defs>
+    <linearGradient id="glow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FF6B2B;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FF9F1C;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <!-- Anvil shape - the forge -->
+  <path d="M128 320 L96 400 L416 400 L384 320 Z" fill="#1a1a1a"/>
+  <path d="M112 320 L400 320 L400 340 L112 340 Z" fill="#2a2a2a"/>
+  <!-- Hammer -->
+  <rect x="240" y="80" width="32" height="200" rx="4" fill="#e0e0e0" transform="rotate(-15 256 180)"/>
+  <rect x="210" y="60" width="92" height="48" rx="6" fill="url(#glow)" transform="rotate(-15 256 84)"/>
+  <!-- Sparks -->
+  <circle cx="180" cy="280" r="4" fill="#FF6B2B" opacity="0.9"/>
+  <circle cx="200" cy="260" r="3" fill="#FFD700" opacity="0.8"/>
+  <circle cx="160" cy="270" r="2.5" fill="#FF9F1C" opacity="0.7"/>
+  <circle cx="340" cy="275" r="3.5" fill="#FF6B2B" opacity="0.85"/>
+  <circle cx="320" cy="255" r="2" fill="#FFD700" opacity="0.75"/>
+  <!-- Text -->
+  <text x="256" y="470" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-weight="700" font-size="56" fill="#e0e0e0" letter-spacing="8">FORGE</text>
+</svg>

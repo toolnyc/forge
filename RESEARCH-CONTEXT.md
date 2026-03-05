@@ -10,7 +10,6 @@ Compiled March 4, 2026 from all CLAUDE.md files, .claude/ configs, Dropbox, and 
 - **Entity:** Late Bloomer Studio LLC (legally changing to Huge Tool LLC)
 - **Brand:** tool.nyc — "I make websites" energy
 - **EIN:** Registered, single-member LLC
-- **CPA:** Avni & Fogel CPAs, Roslyn Heights, NY
 
 ### Identity
 - Senior solo practitioner (not freelancer, not agency)
@@ -22,53 +21,47 @@ Compiled March 4, 2026 from all CLAUDE.md files, .claude/ configs, Dropbox, and 
 - Anti-patterns: marketing buzzwords, hedging, superlatives, filler enthusiasm, "we" when it's one person
 
 ### Life Context
-- Rents in Brooklyn ($1,550/month, ~600 sqft, ~110 sqft home office)
-- HealthFirst insurance (paying monthly premiums)
-- Schwab investment account (dividends + capital gains/losses)
+- Rents in Brooklyn (home office setup)
+- Health insurance (paying monthly premiums)
+- Investment account (dividends + capital gains/losses)
 - Graduate student: Georgia Tech (CSE-6040 computing, ISYE-6501 analytics modeling)
 - Active music producer (Ableton Live) and DJ (Rekordbox, Engine DJ)
-- Employment history: W-2 at Hyperbolic Feb-July 2025, otherwise freelance/consulting
+- Employment history: W-2 job Feb-July 2025, otherwise freelance/consulting
 
 ---
 
 ## FINANCIALS
 
 ### 2024 Baseline
-- **Gross revenue:** $74,698
-- **Net business income (Schedule C):** $30,887
-- **W-2 wages (Rucola):** $9,992
-- **Dividends:** $9,413
-- **Total tax owed:** $7,987 ($5,373 federal + $2,614 NY)
-- **Underpayment penalties:** $309 (avoidable)
-- **Expenses tracked in QuickBooks:** only $600 (vs ~$43K actual)
-- **Home office:** only $550 (simplified method — could be $3,400+ actual method)
+- **Gross revenue:** Mid-five-figure consultancy revenue
+- **Net business income (Schedule C):** Roughly 40% of gross after expenses
+- **W-2 wages:** Additional part-time income
+- **Dividends:** Low-five-figure investment income
+- **Tax situation:** Under-tracked expenses, simplified home office method (leaving significant deductions on the table)
 
 ### 2025 Transition
-- W-2 at Hyperbolic (Feb-July), minimal freelance July-Dec
-- Investment withdrawals from Schwab
+- W-2 employment (Feb-July), minimal freelance July-Dec
+- Investment withdrawals
 - Zero estimated quarterly payments made (relying on W-2 withholding)
 
 ### 2026 Targets
 - **Revenue goal:** $10-15K/month ($120-180K annual)
 - **Revenue mix:** 40% retainers/recurring, 40% projects, 20% Club Stack SaaS
-- **Quarterly estimates due:** ~$1,936/quarter (Federal + NY + NYC)
+- **Quarterly estimates due:** Standard federal + state + city obligations
 
 ### Revenue Streams
-1. **Consulting packages:** Launch Kit $12K, Growth $22K, Full Build $38-45K
-2. **Retainers:** Maintenance $500/mo, On-Call $3K/mo, Embedded $5K/mo
-3. **Club Stack SaaS:** $299/month per venue (pre-launch)
+1. **Consulting packages:** Launch Kit, Growth, Full Build (tiered pricing from low-five to mid-five figures)
+2. **Retainers:** Maintenance, On-Call, Embedded (tiered monthly pricing)
+3. **Club Stack SaaS:** Monthly per-venue subscription (pre-launch)
 4. **Event ticketing (VERBS):** Active but smaller revenue
-
-### Known Clients (Past/Present)
-- Hyperbolic, ThickLabel, Here Productions, Stripe/Big, Lily Wan Corp, DTA/Pokimane, AGS, MLB/MuchCreative, Rucola
 
 ### Deductions Being Missed
 - Self-employed health insurance premiums (HUGE — above-the-line)
-- Home office actual method ($3,400+ vs $550 simplified)
+- Home office actual method (significantly more than simplified)
 - Internet business percentage
 - All SaaS subscriptions (Figma, Supabase, Cloudflare, domains, etc.)
 - Stripe fees, phone, professional development, client meals, transportation
-- SEP-IRA contributions (could save ~$3,300 at $14K contribution)
+- SEP-IRA contributions (meaningful tax savings potential)
 
 ---
 
@@ -78,14 +71,13 @@ Compiled March 4, 2026 from all CLAUDE.md files, .claude/ configs, Dropbox, and 
 - **Stack:** Astro 5 SSR → Cloudflare Pages, Supabase, Stripe, Resend, R2
 - **Features:** Portfolio mood board, AI inquiry chatbot (OpenAI Whisper + GPT-4o-mini), client portal (magic links), merch shop, admin dashboard, analytics
 - **Domain:** tool.nyc (prod), pre.tool.nyc (staging)
-- **DB:** eknmuaffpvkiwylrybql.supabase.co
 - **Status:** Core infrastructure complete, polishing animations + Cal.com integration
 - **Sessions:** 137 Claude Code sessions (most active project)
 
 ### 2. Club Stack — SaaS for Nightlife Venues
 - **Purpose:** Displace RA's 10% commission with flat subscription
 - **Target:** Underground/music-first venues, 200-600 capacity
-- **Pricing:** $299/month per venue, DJs free
+- **Pricing:** Flat monthly per venue, DJs free
 - **Philosophy:** Ghost business model applied to nightlife — flat fee, 0% creator cut, open source ethos
 - **Status:** Post-research, pre-MVP
 - **Stack (planned):** Next.js + Supabase + Stripe Connect
@@ -94,7 +86,7 @@ Compiled March 4, 2026 from all CLAUDE.md files, .claude/ configs, Dropbox, and 
 - **Purpose:** NYC event aggregator + recommendation engine
 - **Stack:** Python 3.12, httpx, BeautifulSoup4, Claude API (batch scoring), Supabase, Telegram bot, Twilio IVR
 - **Scrapes:** RA, DICE, Partiful, Basement, Light & Sound, NYC Noise
-- **Server:** Hetzner CX22 at api.clubstack.net, scheduled scrapes 6AM/6PM
+- **Server:** Hetzner VPS, scheduled scrapes 6AM/6PM
 - **Taste profile:** 319 artists, 57 venues (weighted)
 - **Top artists:** Sleep D, Mia Koden, Autumns, Skee Mask, KiNK, Cinthie, DJ Hell
 - **Top venues:** Nowadays, BASEMENT, Signal, H0L0, Good Room, Paragon
@@ -244,7 +236,7 @@ Compiled March 4, 2026 from all CLAUDE.md files, .claude/ configs, Dropbox, and 
 ### Hosting
 - **Cloudflare Pages:** toolweb (tool.nyc), verbs
 - **Vercel:** experiment-lacrosse, g1882, 1134-web, forge dashboard (planned)
-- **Hetzner VPS (89.167.63.37):** ra-killer, forge orchestrator, forge builder
+- **Hetzner VPS:** ra-killer, forge orchestrator, forge builder
 
 ### Services
 - **Supabase:** Multiple projects (all DB + auth + storage)

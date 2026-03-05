@@ -256,8 +256,11 @@ def prepare_branch(issue_number: int, title: str) -> str:
     branch_name = f"{cfg.branch_prefix}/{issue_number}-{slugify(title)}"
 
     run(["git", "fetch", "origin"])
-    run(["git", "checkout", "main"])
+    # Clean up any leftover state
+    run(["git", "checkout", "main"], check=False)
     run(["git", "reset", "--hard", "origin/main"])
+    # Delete stale local branch if it exists
+    run(["git", "branch", "-D", branch_name], check=False)
     run(["git", "checkout", "-b", branch_name])
 
     return branch_name
