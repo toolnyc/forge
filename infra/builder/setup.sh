@@ -24,16 +24,18 @@ if ! command -v gh &>/dev/null; then
     echo "Installed gh CLI"
 fi
 
-# --- Claude Code ---
-if ! command -v claude &>/dev/null; then
-    npm install -g @anthropic-ai/claude-code 2>/dev/null || {
-        # Install Node if needed
-        curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
-        apt-get install -y -qq nodejs
-        npm install -g @anthropic-ai/claude-code
-    }
-    echo "Installed Claude Code"
+# --- Ollama (local LLM for free judge + cheap builds) ---
+if ! command -v ollama &>/dev/null; then
+    curl -fsSL https://ollama.com/install.sh | sh
+    echo "Installed Ollama"
 fi
+# Pull the default model in the background (non-blocking)
+sudo -u forge ollama pull qwen2.5-coder:7b &
+echo "Pulling qwen2.5-coder:7b in background..."
+
+# --- Aider + Python deps ---
+pip3 install -r /opt/forge/infra/builder/requirements.txt
+echo "Installed aider and Python dependencies"
 
 # --- Clone repo ---
 REPO_DIR="/opt/forge"
@@ -68,9 +70,12 @@ echo "Authenticate gh CLI as the forge user:"
 echo "  sudo -u forge gh auth login"
 echo ""
 
-# --- Accept Claude Code terms (headless) ---
-echo "Accept Claude Code terms:"
-echo "  sudo -u forge claude --version"
+# --- Telegram bot setup (optional) ---
+echo "To enable Telegram control:"
+echo "  1. Message @BotFather → /newbot → copy the token"
+echo "  2. Send a message to the bot"
+echo "  3. Visit https://api.telegram.org/bot<TOKEN>/getUpdates → find chat_id"
+echo "  4. Add TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID to .env"
 echo ""
 
 # --- Install systemd service ---
