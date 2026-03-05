@@ -4,7 +4,7 @@ Open-source multiagent framework backed by Supabase PostgreSQL. Built by Pete Wa
 
 ## Why Forge exists
 
-Pete runs a solo creative consultancy with 8+ active codebases, a music recommendation engine, a SaaS product in development (Club Stack), and a business operations dashboard being built. His time is the bottleneck. Forge automates what can be automated — overnight builds, research, content, ops — so daytime hours go to client work and creative output.
+Pete runs a solo creative consultancy with 8+ active codebases, a music recommendation engine, a SaaS product in development (Club Stack), and a business operations dashboard being built. His time is the bottleneck. Forge automates what can be automated — research, content, ops — so daytime hours go to client work and creative output.
 
 **Core principles:** Open source, self-hosted (Hetzner), cost-aware, model-agnostic, no vendor lock-in.
 
@@ -13,29 +13,30 @@ Pete runs a solo creative consultancy with 8+ active codebases, a music recommen
 ```
 forge/
 ├── orchestrator/          # Python package (forge-orchestrator)
-│   ├── src/
+│   ├── forge/
 │   │   ├── agents/        # Agent implementations
 │   │   │   ├── base.py    # ForgeAgent base class (task lifecycle, cost tracking)
 │   │   │   └── research.py # Research agent (Pydantic AI + DuckDuckGo)
 │   │   ├── memory/        # Memory system (store.py, retrieval.py)
+│   │   ├── judges/        # Judge/evaluation logic
 │   │   ├── graph/         # LangGraph workflows (planned)
 │   │   ├── tools/         # Custom agent tools (planned)
 │   │   ├── api/           # FastAPI endpoints (planned)
+│   │   ├── telegram.py    # Telegram bot commands (/ask, /tasks, /task, /costs, /health)
+│   │   ├── router.py      # Task routing logic
 │   │   ├── cli.py         # Typer CLI (forge command)
 │   │   ├── db.py          # Supabase client singleton
 │   │   └── config.py      # Env-based config
 │   └── pyproject.toml
-├── infra/
-│   └── builder/           # Autonomous build loop (Hetzner systemd service)
-│       ├── forge_builder.py    # Main loop: polls GitHub Issues → Claude Code headless → PRs
-│       ├── forge-builder.service # systemd unit
-│       ├── setup.sh            # Hetzner VPS provisioning
-│       └── .env.example        # Config template (budget, model, schedule)
-├── dashboard/             # Web UI (planned — Next.js on Vercel)
-├── migrations/            # DB migrations (planned)
+├── migrations/            # DB migrations
 ├── CLAUDE.md              # This file
 └── RESEARCH-CONTEXT.md    # Full context on Pete's life, projects, and preferences
 ```
+
+## Related repos
+
+- **forge-builder** (`~/Code/forge-builder/`): Autonomous CI agent that polls GitHub Issues and opens PRs. Runs on Hetzner VPS. Separate repo — works on any repo, not just forge.
+- **toolweb** (`~/Code/toolweb/`): Has forge dashboard pages at `src/pages/admin/forge/*` — reads from forge's Supabase, no code dependency on this repo.
 
 ## Tech stack
 
@@ -64,7 +65,7 @@ forge/
 - snake_case for everything except class names
 - All DB interaction through `get_db()` singleton
 - Agents extend `ForgeAgent` base class
-- New agents go in `orchestrator/src/agents/`
+- New agents go in `orchestrator/forge/agents/`
 - Keep imports sorted (ruff handles this)
 - Stay tightly scoped — don't refactor adjacent code or expand beyond what was asked
 - Plan before implementing (default to plan mode)
@@ -77,31 +78,36 @@ All tasks persisted in Supabase `tasks` table with token/cost tracking.
 
 ## Adding a new agent
 
-1. Create `orchestrator/src/agents/your_agent.py`
+1. Create `orchestrator/forge/agents/your_agent.py`
 2. Define raw Pydantic AI `Agent` with system prompt and tools
 3. Wrap in `ForgeAgent(name="your_agent", agent=_your_agent)`
-4. Export from `orchestrator/src/agents/__init__.py`
+4. Export from `orchestrator/forge/agents/__init__.py`
 5. Add CLI command in `cli.py` if user-facing
 
 ## Cost awareness
 
-Budget is real — Pete can't burn daytime tokens on overnight builds.
+Budget is real — don't burn tokens carelessly.
 
 - Default: claude-sonnet-4-6 (most tasks)
 - Simple/routine: claude-haiku-4-5
 - Critical architecture only: claude-opus-4-6
 - Always log costs to cost_log table
-- Builder has daily cap ($5 default) and per-issue cap ($1.50)
-- Budget pressure (<30% remaining) → auto-downgrade to haiku
-- Issue labels drive model selection: `simple`/`docs` → haiku, `complex`/`feature` → sonnet
 
-## Builder loop (infra/builder/)
+## Telegram bot
 
-Runs on Hetzner VPS as systemd service. Polls GitHub Issues labeled `forge-build`, runs Claude Code headless to implement each one, opens PRs for review.
+Forge has its own Telegram commands for interacting with the orchestrator, defined in `orchestrator/forge/telegram.py`:
 
-Flow: Issue labeled `forge-build` → builder picks it up → creates branch → Claude Code implements → commits → opens PR → labels issue `pr-ready`
+- `/ask <prompt>` — Route + run agent, return result
+- `/tasks` — List 10 recent tasks
+- `/task <id>` — Task detail + judgment verdict
+- `/costs` — Today / this week / total spend by model
+- `/health` — Supabase connectivity check
 
-Budget controls: daily cap, per-issue cap, model auto-switching, active hours window, append-only spend log (budget.jsonl).
+Currently standalone handlers — wiring up as a running bot is a future task.
+
+## Dashboard
+
+The web dashboard lives in **toolweb** at `src/pages/admin/forge/*`. It reads from forge's Supabase project — no code dependency on this repo. Pages: overview, tasks list, task detail, costs, judgments.
 
 ## Pete's ecosystem (what agents may interact with)
 

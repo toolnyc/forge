@@ -3,6 +3,7 @@
 from pydantic_ai import Agent
 from pydantic_ai.common_tools.duckduckgo import duckduckgo_search_tool
 
+from ..judges import CompletenessJudge, FactualGroundingJudge, JudgePanel, TaskAlignmentJudge
 from .base import ForgeAgent
 
 # The raw Pydantic AI agent
@@ -30,8 +31,15 @@ Output format: A structured research report with:
     tools=[duckduckgo_search_tool()],
 )
 
-# Wrapped with Forge task lifecycle
+# Judge panel for research output
+_research_panel = JudgePanel(
+    judges=[TaskAlignmentJudge(), CompletenessJudge(), FactualGroundingJudge()],
+)
+
+# Wrapped with Forge task lifecycle + judges
 research_agent = ForgeAgent(
     name="research",
     agent=_research_agent,
+    judge_panel=_research_panel,
+    task_type="research",
 )

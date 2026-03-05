@@ -1,2 +1,0 @@
-aider-chat>=0.50.0
-python-telegram-bot>=21.0
