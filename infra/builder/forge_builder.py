@@ -435,6 +435,60 @@ def process_issue(issue: dict):
         run(["git", "checkout", "main"], check=False)
 
 
+def post_run_summary():
+    """Post a summary of tonight's build activity as a GitHub issue comment or discussion."""
+    log_path = Path(cfg.budget_log)
+    if not log_path.exists():
+        return
+
+    today = _today_str()
+    entries = []
+    for line in log_path.read_text().splitlines():
+        try:
+            entry = json.loads(line)
+            if entry.get("date") == today:
+                entries.append(entry)
+        except json.JSONDecodeError:
+            continue
+
+    if not entries:
+        return
+
+    total_cost = sum(e.get("cost_usd", 0) for e in entries)
+    total_turns = sum(e.get("turns", 0) for e in entries)
+    issues_worked = [e.get("issue") for e in entries]
+    models_used = set(e.get("model", "unknown") for e in entries)
+
+    summary = f"""## Forge Builder — Run Summary ({today})
+
+| Metric | Value |
+|--------|-------|
+| Issues attempted | {len(entries)} |
+| Issues worked | {', '.join(f'#{i}' for i in issues_worked)} |
+| Models used | {', '.join(models_used)} |
+| Total estimated cost | ${total_cost:.2f} |
+| Budget remaining | ${budget_remaining():.2f} / ${cfg.daily_budget_usd:.2f} |
+
+### Activity Log
+"""
+    for e in entries:
+        summary += f"- **#{e.get('issue')}** — {e.get('model', '?')}, ~{e.get('turns', '?')} turns, ${e.get('cost_usd', 0):.2f}\n"
+
+    summary += f"\n---\n_Generated automatically by Forge Builder_"
+
+    # Post as a comment on a tracking issue or create a discussion
+    # For now, create a summary issue
+    try:
+        gh(["issue", "create",
+            "--repo", cfg.github_repo,
+            "--title", f"[build-summary] {today}",
+            "--body", summary,
+            "--label", "build-summary"])
+        log.info("Posted run summary for %s", today)
+    except Exception:
+        log.exception("Failed to post run summary")
+
+
 def main():
     """Main polling loop."""
     log.info(
@@ -451,18 +505,26 @@ def main():
         log.error("Repo dir %s does not exist. Exiting.", cfg.repo_dir)
         sys.exit(1)
 
+    issues_processed = 0
+
     while True:
         try:
             # Schedule gate
             if not is_within_active_hours():
                 log.info("Outside active hours (%s). Sleeping...", cfg.active_hours)
+                if issues_processed > 0:
+                    post_run_summary()
+                    issues_processed = 0
                 time.sleep(cfg.poll_interval)
                 continue
 
             # Budget gate
             remaining = budget_remaining()
             if remaining <= 0:
-                log.info("Daily budget exhausted ($%.2f spent). Sleeping until tomorrow...", cfg.daily_budget_usd)
+                log.info("Daily budget exhausted ($%.2f spent). Posting summary...", cfg.daily_budget_usd)
+                if issues_processed > 0:
+                    post_run_summary()
+                    issues_processed = 0
                 time.sleep(cfg.poll_interval * 6)  # check less often when broke
                 continue
 
@@ -473,10 +535,16 @@ def main():
                 log.info("Found %d pending issue(s)", len(issues))
                 issue = sorted(issues, key=lambda i: i["number"])[0]
                 process_issue(issue)
+                issues_processed += 1
             else:
                 log.info("No pending issues. Sleeping...")
+                if issues_processed > 0:
+                    post_run_summary()
+                    issues_processed = 0
         except KeyboardInterrupt:
             log.info("Shutting down.")
+            if issues_processed > 0:
+                post_run_summary()
             break
         except Exception:
             log.exception("Unexpected error in main loop")
