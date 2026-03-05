@@ -1,0 +1,4 @@
+2026-03-05 04:26:34,660 [INFO] Forge Builder starting — repo: , poll: 300s, daily_budget: $5.00, per_issue: $1.50, hours: always
+2026-03-05 04:26:34,661 [ERROR] FORGE_GITHUB_REPO not set. Exiting.
+get: $5.00, per_issue: $1.50, hours: always
+2026-03-05 04:26:34,661 [ERROR] FORGE_GITHUB_REPO not set. Exiting.
