@@ -269,6 +269,9 @@ def has_changes() -> bool:
 
 def commit_and_push(branch_name: str, issue_number: int, title: str):
     """Stage all changes, commit, push."""
+    # Ensure secrets and logs are never committed
+    run(["git", "reset", "HEAD", "--", "infra/builder/.env", "infra/builder/budget.jsonl"], check=False)
+    run(["git", "checkout", "--", "infra/builder/.env"], check=False)
     run(["git", "add", "-A"])
     commit_msg = f"forge-build: {title} (#{issue_number})\n\nAutonomously implemented by Forge Builder using Claude Code.\nCloses #{issue_number}\n\nCo-Authored-By: Claude <noreply@anthropic.com>"
     run(["git", "commit", "-m", commit_msg])
