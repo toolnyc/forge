@@ -18,7 +18,7 @@ jobs:
           username: ${{ secrets.HETZNER_USER }}
           key: ${{ secrets.HETZNER_SSH_KEY }}
           script: |
-            cd /opt/forge
+            cd ~/forge
             git pull origin main
             sudo systemctl restart forge-builder
             sleep 2
