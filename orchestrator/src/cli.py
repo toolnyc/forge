@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import asyncio
+import logging
 import uuid
 from typing import Optional
 
@@ -46,17 +47,8 @@ def research(
         "input": {"prompt": prompt},
     }).execute()
 
-    console.print(f"[green]Task created:[/green] {task_id}")
-    console.print("[yellow]Running research agent...[/yellow]")
-
-    result = asyncio.run(research_agent.run_task(
-        task_id=task_id,
-        prompt=prompt,
-        project_id=project_id,
-    ))
-
-    console.print("\n[green]Research complete![/green]\n")
-    console.print(result["response"])
+    console.print(f"[green]Task queued:[/green] {task_id}")
+    console.print("[dim]Run [bold]forge worker[/bold] to process pending tasks.[/dim]")
 
 
 @app.command()
@@ -175,6 +167,18 @@ def costs(
 
     table.add_row("[bold]Total[/bold]", f"[bold]${grand_total:.4f}[/bold]")
     console.print(table)
+
+
+@app.command()
+def worker():
+    """Start the task worker (runs forever, polls for pending tasks)."""
+    logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
+    from .worker import worker_loop
+    console.print("[green]Worker starting...[/green] Press Ctrl+C to stop.")
+    try:
+        asyncio.run(worker_loop())
+    except KeyboardInterrupt:
+        console.print("\n[yellow]Worker stopped.[/yellow]")
 
 
 if __name__ == "__main__":
