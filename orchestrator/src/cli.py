@@ -177,5 +177,12 @@ def costs(
     console.print(table)
 
 
+@app.command()
+def api(port: int = typer.Option(8000, "--port", "-p", help="Port to listen on")):
+    """Start the FastAPI server."""
+    import uvicorn
+    uvicorn.run("forge.api:app", host="0.0.0.0", port=port, reload=False)
+
+
 if __name__ == "__main__":
     app()
