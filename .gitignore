@@ -2,6 +2,8 @@
 *.env
 infra/builder/.env
 infra/builder/budget.jsonl
+infra/builder/builder.log
+infra/builder/run.sh
 __pycache__/
 *.pyc
 .venv/

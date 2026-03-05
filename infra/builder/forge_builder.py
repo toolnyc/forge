@@ -155,15 +155,17 @@ def pick_model(issue: dict) -> str:
     remaining = budget_remaining()
     remaining_pct = remaining / cfg.daily_budget_usd if cfg.daily_budget_usd > 0 else 0
 
-    # Budget pressure: switch to cheapest model
+    # Budget pressure: switch to cheapest capable model
     if remaining_pct < 0.30:
-        log.info("Budget tight (%.1f%% remaining) — using haiku", remaining_pct * 100)
-        return "claude-haiku-4-5"
+        log.info("Budget tight (%.1f%% remaining) — using sonnet", remaining_pct * 100)
+        return "claude-sonnet-4-6"
 
     # Label-based routing
-    cheap_labels = {"simple", "docs", "documentation", "typo", "chore", "test", "tests"}
+    # Note: haiku is too cautious for code tasks (asks permission instead of acting).
+    # Use sonnet as the floor for any task that writes code.
+    cheap_labels = {"docs", "documentation", "typo"}
     if labels & cheap_labels:
-        log.info("Simple task detected — using haiku")
+        log.info("Docs-only task detected — using haiku")
         return "claude-haiku-4-5"
 
     expensive_labels = {"complex", "architecture", "refactor", "feature"}
